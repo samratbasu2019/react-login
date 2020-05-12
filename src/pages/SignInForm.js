@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import  {Link } from 'react-router-dom';
+import axios from 'axios';
 
 class SignInForm extends Component{
     constructor() {
         super();
         this.state = {
             email: '',
-            password: ''
+            password: '',
+            message:[]
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -26,9 +28,28 @@ class SignInForm extends Component{
         e.preventDefault();
         console.log('The form was submitted with the following data:');
         console.log(this.state);
+
+        axios
+        .post('http://localhost:8300/findUser?track_id=1',this.state)
+        .then(
+          response =>{
+            this.setState({
+              message : response.data.message
+            });
+            console.log(response)
+          }
+        )
+        .catch(
+          error=>{
+            console.log(error)
+          }
+        );
+        
+        
     }
 
     render(){
+      const { message } = this.state;
         return(
             <div className="FormCenter">
             <form onSubmit={this.handleSubmit} className="FormFields" onSubmit={this.handleSubmit}>
@@ -44,6 +65,9 @@ class SignInForm extends Component{
 
               <div className="FormField">
                   <button className="FormField__Button mr-20">Sign In</button> <Link to="/" className="FormField__Link">Create an account</Link>
+              </div>
+              <div>
+                {message}
               </div>
             </form>
           </div>
